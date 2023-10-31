@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('grid', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('player_id');
             $table->foreign('player_id')->references('id')->on('players');
             $table->string('grid_state');
             $table->timestamps();

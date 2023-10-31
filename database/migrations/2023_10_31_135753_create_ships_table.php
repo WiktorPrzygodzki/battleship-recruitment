@@ -16,7 +16,9 @@ return new class extends Migration
             $table->integer('length');
             $table->boolean('is_sunk');
             $table->integer('points_left');
+            $table->unsignedBigInteger('player_id');
             $table->foreign('player_id')->references('id')->on('players');
+            $table->unsignedBigInteger('grid_id');
             $table->foreign('grid_id')->references('id')->on('grids');
             $table->timestamps();
         });

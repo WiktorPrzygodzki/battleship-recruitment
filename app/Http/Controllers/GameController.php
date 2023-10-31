@@ -13,7 +13,8 @@ class GameController extends Controller
     {
         $player1 = new Player([
             'user_id' => $request->user->id,
-            'score' => 0
+            'score' => 0,
+            'player_number' => 1
         ]);
 
         $game = Game::create([
@@ -37,7 +38,8 @@ class GameController extends Controller
             if($game->available_slots == 1) {
                 $player2 = new Player([
                     'user_id' => $request->user->id,
-                    'score' => 0
+                    'score' => 0,
+                    'player_number' => 2
                 ]);
                 $game->player_1()->attach($player2->id);
                 $game->available_slots = 0;

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('ship_id');
             $table->foreign('ship_id')->references('id')->on('ships');
             $table->integer('from_row');
             $table->integer('to_row');

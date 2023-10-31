@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Game extends Model
 {
@@ -20,18 +20,18 @@ class Game extends Model
         'creator_id'
     ];
 
-    public function player_1(): HasOne
+    public function player_1(): BelongsTo
     {
-        return $this->hasOne(Player::class, 'player_1_id', 'id');
+        return $this->belongsTo(Player::class, 'player_1_id', 'id');
     }
 
-    public function player_2(): HasOne
+    public function player_2(): BelongsTo
     {
-        return $this->hasOne(Player::class, 'player_2_id', 'id');
+        return $this->belongsTo(Player::class, 'player_2_id', 'id');
     }
 
-    public function creator(): HasOne
+    public function creator(): BelongsTo
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 }

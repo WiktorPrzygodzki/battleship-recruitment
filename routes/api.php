@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('tokencheck')->get('/user', function (Request $request) {
     return json_encode($request->user);
 });
+
+Route::middleware('tokencheck')->group(function() {
+    Route::prefix('game')->group(function() {
+        Route::post('/create', [GameController::class, 'createGame'])->name('game.create');
+        Route::post('/join/{gameId}', [GameController::class, 'joinGame'])->name('game.join');
+        Route::post('/fire', [GameController::class, 'fire'])->name('game.fire');
+    });
+});
