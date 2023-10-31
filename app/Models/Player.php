@@ -13,7 +13,6 @@ class Player extends Model
 
     protected $fillable = [
         'user_id',
-        'grid_id',
         'score',
     ];
 

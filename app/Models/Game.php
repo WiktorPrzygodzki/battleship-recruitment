@@ -15,7 +15,9 @@ class Game extends Model
         'player_2_id',
         'winner',
         'available_slots',
-        'status'
+        'status',
+        'current_player_id',
+        'creator_id'
     ];
 
     public function player_1(): HasOne
@@ -25,6 +27,11 @@ class Game extends Model
 
     public function player_2(): HasOne
     {
-        return $this->hasOne(PLayer::class, 'player_2_id', 'id');
+        return $this->hasOne(Player::class, 'player_2_id', 'id');
+    }
+
+    public function creator(): HasOne
+    {
+        return $this->hasOne(User::class);
     }
 }

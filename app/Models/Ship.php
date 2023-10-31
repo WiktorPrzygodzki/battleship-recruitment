@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ship extends Model
 {
@@ -14,10 +15,17 @@ class Ship extends Model
         'length',
         'is_sunk',
         'points_left',
+        'player_id',
+        'grid_id'
     ];
 
-    public function positions(): HasMany
+    public function position(): HasOne
     {
-        return $this->hasmany(Position::class);
+        return $this->hasOne(Position::class);
+    }
+
+    public function grid(): BelongsTo
+    {
+        return $this->belongsTo(Grid::class);
     }
 }
