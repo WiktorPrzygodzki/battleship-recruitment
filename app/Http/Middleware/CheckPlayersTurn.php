@@ -32,7 +32,7 @@ class CheckPlayersTurn
                 return false;
             }
         } else {
-            return response()->json(['error' => "You're not currently taking part in any game"]);
+            return response()->json(['error' => "You're not currently taking part in any game"], 403);
         }
     }
 }

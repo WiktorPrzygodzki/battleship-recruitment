@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -39,8 +40,18 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function player(): HasOne
+    public function grid(): HasOne
     {
-        return $this->hasOne(Player::class);
+        return $this->hasOne(Grid::class);
+    }
+
+    public function deployedShips(): HasMany
+    {
+        return $this->hasMany(Ship::class);
+    }
+
+    public function game(): HasOne
+    {
+        return $this->hasOne(Game::class);
     }
 }

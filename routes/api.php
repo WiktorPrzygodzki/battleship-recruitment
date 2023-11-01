@@ -20,8 +20,9 @@ Route::middleware('tokencheck')->get('/user', function (Request $request) {
 
 Route::middleware('tokencheck')->group(function() {
     Route::prefix('game')->group(function() {
+        Route::get('/games', [GameController::class, 'showAvailableGames'])->name('game.show');
         Route::post('/create', [GameController::class, 'createGame'])->name('game.create');
         Route::post('/join/{gameId}', [GameController::class, 'joinGame'])->name('game.join');
-        Route::post('/fire', [GameController::class, 'fire'])->name('game.fire');
+        Route::post('/fire', [GameController::class, 'fire'])->middleware('checkturn')->name('game.fire');
     });
 });

@@ -22,12 +22,12 @@ class Game extends Model
 
     public function player_1(): BelongsTo
     {
-        return $this->belongsTo(Player::class, 'player_1_id', 'id');
+        return $this->belongsTo(User::class, 'player_1_id', 'id');
     }
 
     public function player_2(): BelongsTo
     {
-        return $this->belongsTo(Player::class, 'player_2_id', 'id');
+        return $this->belongsTo(User::class, 'player_2_id', 'id');
     }
 
     public function creator(): BelongsTo

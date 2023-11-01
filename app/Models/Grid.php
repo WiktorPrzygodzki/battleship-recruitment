@@ -16,9 +16,23 @@ class Grid extends Model
         'grid_state',
     ];
 
+    protected $casts = [
+        'grid_state' => 'array'
+    ];
+
+    public function getGridStateAttribute($val)
+    {
+        return json_decode($val, true);
+    }
+
+    public function setGridStateAttribute($val)
+    {
+        return $attributes['grid_state'] = json_encode($val);
+    }
+
     public function player(): BelongsTo
     {
-        return $this->belongsTo(Player::class);
+        return $this->belongsTo(User::class);
     }
 
     public function ships(): HasMany

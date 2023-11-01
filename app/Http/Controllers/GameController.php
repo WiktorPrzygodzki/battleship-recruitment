@@ -3,16 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
-use App\Models\Player;
+use App\Models\User;
 use Symfony\Component\HttpFoundation\Request;
 use App\Http\Requests\AttackCoordinatesRequest;
 
 class GameController extends Controller
 {
+    public function showAvailableGames()
+    {
+        $availableGames = Game::where('creator_id', '!=', request()->user_id)
+                            ->where('available_slots', 1)
+                            ->select('id', 'status')
+                            ->get();
+        return response()->json(['games' => $availableGames], 200);
+    }
+    
     public function createGame(Request $request)
     {
-        $player1 = new Player([
-            'user_id' => $request->user->id,
+        $player1 = $request->user;
+
+        $player1->update([
             'score' => 0,
             'player_number' => 1
         ]);
@@ -23,8 +33,8 @@ class GameController extends Controller
             'winner' => null,
             'available_slots' => 1,
             'status' => 'setup',
-            'current_player_id' => 1,
-            'creator_id' => $request->user->id
+            'current_player_id' => $player1->id,
+            'creator_id' => $player1->id,
         ]);
 
         return response()->json(['game_id' => $game->id, 'message' => 'Game created successfully!']);
@@ -36,12 +46,13 @@ class GameController extends Controller
         if(!$game) return response()->json(['message' => 'Game not found!', 404]);
         if($game->status == 'waiting_for_players') {
             if($game->available_slots == 1) {
-                $player2 = new Player([
-                    'user_id' => $request->user->id,
+                $player2 = $request->user;
+
+                $player2->update([
                     'score' => 0,
                     'player_number' => 2
                 ]);
-                $game->player_1()->attach($player2->id);
+                $game->player_2()->attach($player2->id);
                 $game->available_slots = 0;
                 $game->status = 'game_full';
                 $game->save();
@@ -56,12 +67,12 @@ class GameController extends Controller
 
     public function getCurentPlayer(Game $game)
     {
-        return Player::find($game->current_player_id);
+        return User::find($game->current_player_id);
     }
 
     public function switchTurn(Game $game)
     {
-        $game->current_player_id = ($game->current_player_id == 1) ? 2 : 1;
+        $game->current_player_id = ($game->current_player_id == $game->player_1->id) ? $game->player_2->id : $game->player_1->id;
     }
 
     public function fire(AttackCoordinatesRequest $request, Game $game)
@@ -72,7 +83,7 @@ class GameController extends Controller
         $y_coordinate = $request->input('y_coordinate');
 
         $currentPlayer = $this->getCurrentPlayer($game);
-        $opponent = ($currentPlayer->id == 2) ? Player::find(2): Player::find(1);
+        $opponent = ($currentPlayer->id == $game->player_2->id) ? $game->player_1: $game->player_2;
 
         if($this->isShotAlreadyFired($x_coordinate, $y_coordinate, $opponent->grid))
         {
