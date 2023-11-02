@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('grid', function (Blueprint $table) {
+        Schema::create('grids', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('player_id');
             $table->foreign('player_id')->references('id')->on('players');
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('grid');
+        Schema::dropIfExists('grids');
     }
 };

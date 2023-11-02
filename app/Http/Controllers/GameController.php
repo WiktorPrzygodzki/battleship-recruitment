@@ -11,9 +11,9 @@ class GameController extends Controller
 {
     public function showAvailableGames()
     {
-        $availableGames = Game::where('creator_id', '!=', request()->user_id)
+        $availableGames = Game::where('creator_id', '!=', request()->user->id)
                             ->where('available_slots', 1)
-                            ->select('id', 'status')
+                            ->select('id', 'status', 'available_slots')
                             ->get();
         return response()->json(['games' => $availableGames], 200);
     }
@@ -29,10 +29,10 @@ class GameController extends Controller
 
         $game = Game::create([
             'player_1_id' => $player1->id,
-            'player_2_id' => null,
-            'winner' => null,
+            'player_2_id' => NULL,
+            'winner' => NULL,
             'available_slots' => 1,
-            'status' => 'setup',
+            'status' => 'waiting_for_players',
             'current_player_id' => $player1->id,
             'creator_id' => $player1->id,
         ]);
@@ -45,14 +45,14 @@ class GameController extends Controller
         $game = Game::find($gameId);
         if(!$game) return response()->json(['message' => 'Game not found!', 404]);
         if($game->status == 'waiting_for_players') {
-            if($game->available_slots == 1) {
+            if($game->available_slots < 2) {
                 $player2 = $request->user;
 
                 $player2->update([
                     'score' => 0,
                     'player_number' => 2
                 ]);
-                $game->player_2()->attach($player2->id);
+                $game->player_2()->associate($player2->id);
                 $game->available_slots = 0;
                 $game->status = 'game_full';
                 $game->save();
@@ -61,7 +61,7 @@ class GameController extends Controller
                 return response()->json(['message' => 'Game is full!'], 400);
             }
         } else {
-            return response()->json(['message' => 'Game unavailable!'], 400);
+            return response()->json(['message' => 'Game unavailable!', 'availavble slots' => $game->available_slots], 400);
         }
     }
 

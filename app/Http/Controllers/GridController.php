@@ -34,11 +34,44 @@ class GridController extends Controller
         $grid->save();
 
         $shipPositions = $request->input('ship_positions');
+
+        $shipCountsLimits = [
+            3 => 1,
+            2 => 2,
+            1 => 4
+        ];
+        
+        $shipCounts = [
+            3 => 0,
+            2 => 0,
+            1 => 0
+        ];
+
         foreach($shipPositions as $shipPosition) {
             $shipLength = $shipPosition['length'];
 
             if(!in_array($shipLength, [4, 3, 2])) {
                 return 'Invalid ship length';
+            }
+
+            if($shipCounts[$shipLength] >= $shipCountsLimits[$shipLength]) {
+                return 'Too many ships of length ' . $shipLength;
+            }
+
+            $positions = $shipPosition['positions'];
+            foreach ($positions as $position) {
+                $fromRow = $position['from']['row'];
+                $fromCol = $position['from']['col'];
+                $toRow = $position['to']['row'];
+                $toCol = $position['to']['col'];
+
+                for ($row = $fromRow; $row <= $toRow; $row++) {
+                    for ($col = $fromCol; $col <= $toCol; $col++) {
+                        if ($grid->grid_state[$row][$col]['status'] === 'ship') {
+                            return 'Ships overlap';
+                        }
+                    }
+                }
             }
 
             DB::beginTransaction();
@@ -61,6 +94,8 @@ class GridController extends Controller
 
                     $this->updateGridState($position, $grid);
                 }
+
+                $shipCounts[$shipLength]++;
 
                 DB::commit();
             } catch (Exception $e) {

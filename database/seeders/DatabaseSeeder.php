@@ -19,5 +19,13 @@ class DatabaseSeeder extends Seeder
                 'password' => 'adminlol',
                 'token' => '123123123'
             ]);
+
+        \App\Models\User::factory()
+            ->create([
+                'name' => 'user',
+                'email' => 'user@user.lol',
+                'password' => 'userlol',
+                'token' => '321321321'
+            ]);
     }
 }

@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\GridController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,9 +22,12 @@ Route::middleware('tokencheck')->get('/user', function (Request $request) {
 
 Route::middleware('tokencheck')->group(function() {
     Route::prefix('game')->group(function() {
-        Route::get('/games', [GameController::class, 'showAvailableGames'])->name('game.show');
+        Route::get('/show', [GameController::class, 'showAvailableGames'])->name('game.show');
         Route::post('/create', [GameController::class, 'createGame'])->name('game.create');
         Route::post('/join/{gameId}', [GameController::class, 'joinGame'])->name('game.join');
         Route::post('/fire', [GameController::class, 'fire'])->middleware('checkturn')->name('game.fire');
+    });
+    Route::prefix('ship')->group(function() {
+        Route::post('/setup', [GridController::class, 'setUpShips'])->name('ship.setup');
     });
 });
