@@ -93,6 +93,10 @@ class GameController extends Controller
         $hit = $this->checkHitOrMiss($x_coordinate, $y_coordinate, $opponent->grid);
         if($hit) {
             $opponent->grid->updateCell($x_coordinate, $y_coordinate, 'hit');
+            $targetedShip = $this->getTargetedShip($opponent->grid, $x_coordinate, $y_coordinate);
+            if($targetedShip) {
+                $this->checkIfShipIsSunk($targetedShip);
+            }
             $currentPlayer->update(['score' => $currentPlayer->score += 100]);
             $this->checkGameStatus($game);
             return response()->json(['message' => 'Hit! Keep firing!']);
@@ -152,5 +156,40 @@ class GameController extends Controller
             $winner = 'Player 2';
         }
         return response()->json(['message' => 'Game Over! ' . $winner . ' wins!']);
+    }
+
+    public function checkIfShipIsSunk($ship)
+    {
+        $position = $ship->position;
+        $start_x = $position->from_col;
+        $start_y = $position->from_row;
+        $end_x = $position->to_col;
+        $end_y = $position->to_row;
+
+        $allHit = true;
+        for($x = $start_x; $x<= $end_x; $x++) {
+            for($y = $start_y; $y<= $end_y; $y++) {
+                if($ship->grid->getCellStatus($x. $y) != 'hit') {
+                    $allHit = false;
+                    break 2;
+                }
+            }
+        }
+        if($allHit) $ship->update(['is_sunk' => true]);
+    }
+
+    public function getTargetedShip($grid, $x, $y) {
+        $ships = $grid->ships;
+        foreach($ships as $ship)
+        {
+            $start_x = $ship->position->from_col;
+            $start_y = $ship->position->from_row;
+            $end_x = $ship->position->to_col;
+            $end_y = $ship->position->to_row;
+            if($x >= $start_x && $x <= $end_x && $y >= $start_y && $y <= $end_y) {
+                return $ship;
+            }
+        }
+        return null;
     }
 }

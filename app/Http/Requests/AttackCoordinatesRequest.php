@@ -22,8 +22,22 @@ class AttackCoordinatesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'x_coordinate' => 'required|string|size:1|lte:10',
+            'x_coordinate' => 'required|string|size:1|in:A,B,C,D,E,F,G,H,I,J',
             'y_coordinate' => 'required|numeric|gte:1|lte:10',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'x_coordinate.required' => 'Please provide the X coordinate',
+            'x_coordinate.string' => 'The X coordinate has to be a letter from A-J',
+            'x_coordinate.size' => 'Please provide only a single letter for the X coordinate',
+            'x_coordinate.in' => 'The X coordinate has to be a letter from A-J',
+            'y_coordinate' => 'Please provide the Y coordinate',
+            'y_coordinate.numeric' => 'The Y coordinate has to be a number',
+            'y_coordinate.gte' => 'The Y coordinate cannot be greater than 10',
+            'y_coordinate.lte' => 'The Y coordinate cannot be smaller than 1',
         ];
     }
 }
