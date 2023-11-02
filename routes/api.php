@@ -25,9 +25,7 @@ Route::middleware('tokencheck')->group(function() {
         Route::get('/show', [GameController::class, 'showAvailableGames'])->name('game.show');
         Route::post('/create', [GameController::class, 'createGame'])->name('game.create');
         Route::post('/join/{gameId}', [GameController::class, 'joinGame'])->name('game.join');
-        Route::post('/fire', [GameController::class, 'fire'])->middleware('checkturn')->name('game.fire');
-    });
-    Route::prefix('ship')->group(function() {
+        Route::post('/fire/{game}', [GameController::class, 'fire'])->middleware('checkturn')->name('game.fire');
         Route::post('/setup', [GridController::class, 'setUpShips'])->name('ship.setup');
     });
 });

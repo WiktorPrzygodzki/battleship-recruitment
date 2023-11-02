@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ShipSetupRequest;
-use Illuminate\Support\Facades\DB;
-use App\Models\Ship;
-use App\Models\Position;
 use Exception;
 use App\Models\Grid;
+use App\Models\Ship;
+use App\Models\Position;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\ShipSetupRequest;
 
 class GridController extends Controller
 {
@@ -27,7 +28,8 @@ class GridController extends Controller
 
     public function setUpShips(ShipSetupRequest $request)
     {
-        $playerId = auth()->user()->id;
+        Log::debug('xD');
+        $playerId = $request->user->id;
         $grid = new Grid();
         $grid->player_id = $playerId;
         $grid->grid_state = $this->initializeGrid();
@@ -60,10 +62,10 @@ class GridController extends Controller
 
             $positions = $shipPosition['positions'];
             foreach ($positions as $position) {
-                $fromRow = $position['from']['row'];
-                $fromCol = $position['from']['col'];
-                $toRow = $position['to']['row'];
-                $toCol = $position['to']['col'];
+                $fromRow = $position['from_row'];
+                $fromCol = $position['from_col'];
+                $toRow = $position['to_row'];
+                $toCol = $position['to_col'];
 
                 for ($row = $fromRow; $row <= $toRow; $row++) {
                     for ($col = $fromCol; $col <= $toCol; $col++) {
@@ -85,10 +87,10 @@ class GridController extends Controller
 
                 foreach($positions as $position) {
                     $position = new Position();
-                    $position->from_row = $position['from']['row'];
-                    $position->from_col = $position['from']['col'];
-                    $position->to_row = $position['to']['row'];
-                    $position->to_col = $position['to']['col'];
+                    $position->from_row = $position['from_row'];
+                    $position->from_col = $position['from_col'];
+                    $position->to_row = $position['to_row'];
+                    $position->to_col = $position['to_col'];
 
                     $ship->position()->save($position);
 
